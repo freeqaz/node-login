@@ -1,10 +1,4 @@
-
-/**
-	* Node.js Login Boilerplate
-	* More Info : http://bit.ly/LsODY8
-	* Copyright (c) 2013-2015 Stephen Braitsch
-**/
-
+'use strict';
 var http = require('http');
 var express = require('express');
 var session = require('express-session');
