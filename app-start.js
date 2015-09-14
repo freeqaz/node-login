@@ -28,7 +28,9 @@ app.use(express.static(__dirname + '/app/public'));
 
 require('./app/server/routes')(app);
 
-if (app.get('env') == 'development') app.use(errorHandler());
+if (app.get('env') === 'development') {
+    app.use(errorHandler());
+}
 
 http.createServer(app).listen(app.get('port'), function(){
 	console.log('Express server listening on port ' + app.get('port'));
