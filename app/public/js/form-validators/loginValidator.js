@@ -1,4 +1,3 @@
-
 function LoginValidator(){
 
 // bind a simple alert window to this controller to display any errors //

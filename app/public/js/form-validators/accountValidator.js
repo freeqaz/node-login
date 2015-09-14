@@ -1,4 +1,3 @@
-
 function AccountValidator(){
 
 // build array maps of the form inputs & control groups //

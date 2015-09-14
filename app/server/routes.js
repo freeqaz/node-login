@@ -1,4 +1,4 @@
-
+'use strict';
 var CT = require('./modules/country-list');
 var AM = require('./modules/account-manager');
 var EM = require('./modules/email-dispatcher');

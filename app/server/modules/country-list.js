@@ -1,5 +1,4 @@
-
-module.exports = [
+export default [
     {short:"  " , name:"Please select a country"},
     {short:"AF" , name:"Afghanistan"},
     {short:"AL" , name:"Albania"},
@@ -241,4 +240,4 @@ module.exports = [
     {short:"YU" , name:"Yugoslavia"},
     {short:"ZM" , name:"Zambia"},
     {short:"ZW" , name:"Zimbabwe"}
-]
+];

@@ -1,4 +1,3 @@
-
 function ResetValidator(){
 
 // modal window to allow users to reset their password //

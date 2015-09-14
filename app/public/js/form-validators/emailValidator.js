@@ -1,4 +1,3 @@
-
 function EmailValidator(){
 
 // bind this to _local for anonymous functions //
