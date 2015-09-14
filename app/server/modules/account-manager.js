@@ -1,23 +1,26 @@
-var crypto 		= require('crypto');
-var MongoDB 	= require('mongodb').Db;
-var Server 		= require('mongodb').Server;
-var moment 		= require('moment');
+'use strict';
+import crypto from 'crypto';
+import {MongoDB, Server, ObjectID} from 'mongodb';
+import moment from 'moment';
 
-var dbPort 		= 27017;
-var dbHost 		= 'localhost';
-var dbName 		= 'node-login';
+const dbPort = 27017;
+const dbHost = 'localhost';
+const dbName = 'node-login';
 
 /* establish the database connection */
 
-var db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}), {w: 1});
-	db.open(function(e, d){
+const serverInstance = new Server(dbHost, dbPort, {auto_reconnect: true});
+const db = new MongoDB(dbName, serverInstance, {w: 1});
+
+db.open(function (e, d) {
 	if (e) {
-		console.log(e);
-	}	else{
-		console.log('connected to database :: ' + dbName);
+		return console.log(e);
 	}
+
+    console.log('connected to database :: ' + dbName);
 });
-var accounts = db.collection('accounts');
+
+const accounts = db.collection('accounts');
 
 /* login validation methods */
 
@@ -129,73 +132,73 @@ exports.validateResetLink = function(email, passHash, callback)
 	});
 }
 
-exports.getAllRecords = function(callback)
+export function getAllRecords(callback)
 {
-	accounts.find().toArray(
-		function(e, res) {
-		if (e) callback(e)
-		else callback(null, res)
-	});
-};
+    function toArrayCb(e, res) {
+        if (e) {
+            callback(e);
+            return;
+        }
 
-exports.delAllRecords = function(callback)
+        callback(null, res);
+    }
+
+	accounts.find().toArray(toArrayCb);
+}
+
+export function delAllRecords(callback)
 {
 	accounts.remove({}, callback); // reset accounts collection for testing //
 }
 
-/* private encryption & validation methods */
-
-var generateSalt = function()
+/***
+ * Private encryption & validation methods.
+ * @returns {string} Salt string.
+ */
+function generateSalt()
 {
-	var set = '0123456789abcdefghijklmnopqurstuvwxyzABCDEFGHIJKLMNOPQURSTUVWXYZ';
-	var salt = '';
-	for (var i = 0; i < 10; i++) {
-		var p = Math.floor(Math.random() * set.length);
-		salt += set[p];
+	const chars = '0123456789abcdefghijklmnopqurstuvwxyzABCDEFGHIJKLMNOPQURSTUVWXYZ';
+    let salt = '';
+	for (let i = 0; i < 10; i++) {
+		const p = Math.floor(Math.random() * chars.length);
+		salt += chars[p];
 	}
 	return salt;
 }
 
-var md5 = function(str) {
+function md5(str) {
 	return crypto.createHash('md5').update(str).digest('hex');
 }
 
-var saltAndHash = function(pass, callback)
+function saltAndHash(pass, callback)
 {
-	var salt = generateSalt();
+	const salt = generateSalt();
+
 	callback(salt + md5(pass + salt));
 }
 
-var validatePassword = function(plainPass, hashedPass, callback)
+function validatePassword(plainPass, hashedPass, callback)
 {
-	var salt = hashedPass.substr(0, 10);
-	var validHash = salt + md5(plainPass + salt);
+	const salt = hashedPass.substr(0, 10);
+    const validHash = salt + md5(plainPass + salt);
+
 	callback(null, hashedPass === validHash);
 }
 
 /* auxiliary methods */
 
-var getObjectId = function(id)
+function getObjectId(id)
 {
-	return new require('mongodb').ObjectID(id);
+	return new ObjectID(id);
 }
 
-var findById = function(id, callback)
+function findById(id, callback)
 {
-	accounts.findOne({_id: getObjectId(id)},
-		function(e, res) {
-		if (e) callback(e)
-		else callback(null, res)
-	});
-};
+	accounts.findOne({_id: getObjectId(id)}, callback);
+}
 
-
-var findByMultipleFields = function(a, callback)
+function findByMultipleFields(a, callback)
 {
-// this takes an array of name/val pairs to search against {fieldName : 'value'} //
-	accounts.find( { $or : a } ).toArray(
-		function(e, results) {
-		if (e) callback(e)
-		else callback(null, results)
-	});
+    // this takes an array of name/val pairs to search against {fieldName : 'value'} //
+	accounts.find( { $or : a } ).toArray(callback);
 }
